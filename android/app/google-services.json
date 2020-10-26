@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "589035487486",
+    "firebase_url": "https://exampreparation-124c5.firebaseio.com",
+    "project_id": "exampreparation-124c5",
+    "storage_bucket": "exampreparation-124c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589035487486:android:3e51eafb29095b5017e5af",
+        "android_client_info": {
+          "package_name": "MyXmPreparation.flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589035487486-vudtjgn6qpd504d2c7ov1p1fnaj164u7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "MyXmPreparation.flutter_app",
+            "certificate_hash": "d7477958c4c7876c88d873f26670222659f446bc"
+          }
+        },
+        {
+          "client_id": "589035487486-fhucu2kg5fr1682e43r46fuaba7kgaft.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEuwrl38sQrOByfNeAmUp9Mr0O_itX4O4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589035487486-fhucu2kg5fr1682e43r46fuaba7kgaft.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
