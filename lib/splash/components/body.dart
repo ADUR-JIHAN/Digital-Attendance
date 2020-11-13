@@ -3,9 +3,12 @@
 
 import 'package:XmPrep/components/default_button.dart';
 import 'package:XmPrep/constants.dart';
+import 'package:XmPrep/home/homescreen.dart';
 import 'package:XmPrep/sign/sign/sign_in.dart';
 import 'package:XmPrep/size_config.dart';
 import 'package:XmPrep/splash/components/splash_content.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -76,7 +79,38 @@ class _BodyState extends State<Body> {
                     DefaultButton(
                       text: "Launch",
                       press: () {
-                        Navigator.pushNamed(context, SignInScreen.routeName);
+
+
+                          var auth = FirebaseAuth.instance;
+                          auth.onAuthStateChanged.listen((user) async {
+                            if (user != null) {
+                              FirebaseUser userData = await FirebaseAuth.instance.currentUser();
+                              var ID=userData.uid;
+                              String NAME=' ';
+                              FirebaseDatabase.instance.reference().child('User').once().then((
+                                  DataSnapshot snapshot) {
+                                Map<dynamic, dynamic> values = snapshot.value;
+                                values.forEach((key, values) {
+                                  if (values['uid'] == ID) {
+                                    setState(() {
+
+                                      NAME = values['name'];
+
+
+                                    });
+                                  }
+                                });
+                              });
+
+                              //Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen(NAME: NAME,)));
+                              Navigator.pushNamed(context, HomeScreen.routeName);
+                              //navigate to home page using Navigator Widget
+                            } else {
+                              Navigator.pushNamed(context, SignInScreen.routeName);
+                              //navigate to sign in page using Navigator Widget
+                            }
+                          });
+
                       },
                     ),
                     Spacer(),

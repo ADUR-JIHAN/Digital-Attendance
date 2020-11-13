@@ -16,13 +16,20 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 bool b;
 class SignForm extends StatefulWidget {
+  const SignForm({
+    Key key,
+    @required this.show,
+  }) : super(key: key);
+  final bool show;
   @override
-  _SignFormState createState() => _SignFormState();
+  _SignFormState createState() => _SignFormState(show);
 }
 
 String NAME;
 
 class _SignFormState extends State<SignForm> {
+  _SignFormState(this.show);
+  bool show;
   final _formKey = GlobalKey<FormState>();
   bool remember = false;
   final List<String> errors = [];
@@ -112,17 +119,31 @@ class _SignFormState extends State<SignForm> {
               ),
               color: Colors.redAccent.withOpacity(0.3),
               onPressed: () {
-                ModalProgressHUD(
-                  inAsyncCall: true, // here show is bool value, which is used to when to show the progess indicator
-                  child: Column(
-                    children: <Widget>[
-                      Text(" Modal Progress Indicator ")
-                    ],
-                  ),
-                );
 
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
+                  showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (context) => AlertDialog(
+                        content: Row(children: <Widget>[
+                          SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                  valueColor: AlwaysStoppedAnimation(Colors.black)
+                              )
+                          ),
+
+                          SizedBox(width: 10),
+
+                          Text("SIGN IN.......")
+                        ]),
+                      )
+                  );
+
+
 
                   signIn(emailController.text, passwordController.text)
                       .then((uid) => {

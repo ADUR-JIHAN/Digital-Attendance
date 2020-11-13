@@ -58,6 +58,9 @@ dependencies:
   toast: ^0.1.5
   dependencies:
   modal_progress_hud: ^0.1.3
+  geolocator:
+  device_info:
+
 
 
 
@@ -99,26 +102,11 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/
-
-    - jiha.jpg
     - assets/icons/
-    - images/JIHAN.JPG
-    - biceps.png
-    - back.png
-    - chest.png
-    - fruit_granola.jpg
-    - JIHAN.JPG
-    - keto_snack.jpg
-    - pesto_pasta.jpg
-    - jiha.jpg
-    - user.jpg
-    - images/ai.jpeg
-    - images/dart.jpg
     - images/LOGO.png
     - images/1.jpg
     - images/2.jpg
     - images/3.jpg
-    - images/ds.jpg
     - images/pngfuel.com.png
     - images/s1-removebg-preview.png
     - images/s2-removebg-preview.png
@@ -129,7 +117,7 @@ flutter:
     - images/ic_camera.png
     - images/sir.jpg
     - images/students.jpg
-    - s1-removebg-preview.png
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

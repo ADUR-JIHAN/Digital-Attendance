@@ -131,6 +131,15 @@ class _GenericCardState extends State<GenericCard> {
                               final databaseReference = FirebaseDatabase.instance.reference();
                               String cd = coursecodeController.text;
                               if(widget.code == cd) {
+                                databaseReference.child('CRSLIST').child(widget.cl.CourseName).child(widget.cl.coursecode).child(usr.uid)
+                                    .set({
+                                  'StudentId': usr.id,
+                                  'StudentName': usr.name,
+                                  'StudentPic': usr.pic,
+                                  'StudentUserId':usr.uid,
+                                  'Studenttype':' ',
+                                });
+
                                 databaseReference.child('User').child(widget.id).child('Enrollemtn')
                                     .push()
                                     .set({
@@ -146,13 +155,16 @@ class _GenericCardState extends State<GenericCard> {
 
                                 }).then((value) =>
                                 {
+                                Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen(NAME:usr.name)))
 
                                 });
 
+
                                 //Navigator.of(context).pop();
                               }
-                              Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen()));
                               //Navigator.of(context).pop();
+
+
                             },
                             child: Text(
                               "Okay",

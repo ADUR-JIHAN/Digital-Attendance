@@ -1,4 +1,5 @@
 import 'package:XmPrep/DetailsScreen/course_detail_screen.dart';
+import 'package:XmPrep/home/homescreen.dart';
 import 'package:XmPrep/model/Course.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,12 +15,12 @@ class CourseModel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(
-        right: 20,
-        bottom: 10,
+        right: 10,
+        bottom: 0,
       ),
       child: Material(
         borderRadius: BorderRadius.all(Radius.circular(20)),
-        elevation: 5,
+        elevation: 3,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -42,7 +43,7 @@ class CourseModel extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       child: Image.network(
                         cl.Pic?? "",
-                        width: 180,
+                        width: MediaQuery.of(context).size.width*0.35,
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -103,7 +104,7 @@ class CourseModel extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 1),
                   ],
                 ),
               ),

@@ -1,4 +1,5 @@
 
+import 'package:XmPrep/DetailsScreen/students_details.dart';
 import 'package:XmPrep/model/AttendanceClassModel.dart';
 import 'package:XmPrep/model/Course.dart';
 import 'package:commons/commons.dart';
@@ -11,8 +12,8 @@ import 'section_title.dart';
 class Class_Member extends StatelessWidget {
   const Class_Member({
     Key key,
-    this.cl,
     @required this.acl,
+    this.cl
   }) : super(key: key);
   final AttendanceClassModel acl;
   final Course cl;
@@ -42,6 +43,8 @@ class Class_Member extends StatelessWidget {
                 press: () {},
               ),
               MemberCategoryCard(
+                cl: cl,
+                acl: acl,
                 image: "images/students.jpg",
                 name: "Students",
                 press: () {},
@@ -77,7 +80,12 @@ class MemberCategoryCard extends StatelessWidget {
         onTap: (){
           if(name=='Instructors')
           ShowModalBottomSheet(context,acl,cl);
-          else null;
+          else if(name=="Students"){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new StudentslistScreen(cl: cl,)));
+          }
        },
         child: SizedBox(
           width: getProportionateScreenWidth(202),
@@ -163,7 +171,7 @@ class InstructorTile extends StatelessWidget {
             vertical: 25),
         child: Row(
           children: <Widget>[
-            Image.network("images/sir.jpg", height: 50,),
+            Image.network(cl.Pic, height: 50,),
             SizedBox(width: 17,),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

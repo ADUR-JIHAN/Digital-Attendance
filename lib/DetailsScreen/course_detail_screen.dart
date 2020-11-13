@@ -11,9 +11,12 @@ import 'package:tuple/tuple.dart';
 import 'dart:math';
 import 'package:commons/commons.dart';
 import 'package:toast/toast.dart';
-
+import 'package:geolocator/geolocator.dart';
+String position_latitude='';
+String position_longitude='';
 String securitycodes='';
 String ID='';
+String _currentAddress;
 List<AttendanceClassModel>_Attenclasslist = [];
 class clDetailScreen extends StatefulWidget {
   final Course cl;
@@ -29,7 +32,7 @@ class clDetailScreen extends StatefulWidget {
 
   _ClassDetailsScreenState createState() => _ClassDetailsScreenState(cl,acl);
 }
-
+final position1='';
 class _ClassDetailsScreenState extends State<clDetailScreen> {
   Course cl;
   AttendanceClassModel acl;
@@ -43,6 +46,8 @@ class _ClassDetailsScreenState extends State<clDetailScreen> {
     _Attenclasslist.clear();
     getUserData();
     getList();
+    _getlocation();
+
     super.initState();
 
     FirebaseDatabase database = new FirebaseDatabase();
@@ -66,8 +71,9 @@ class _ClassDetailsScreenState extends State<clDetailScreen> {
             DATA[individualkey]['Time']?? "",
             DATA[individualkey]['ClassCode']?? "",
             DATA[individualkey]['Presents']?? "",
-            DATA[individualkey]['coordinateofmine']?? "",
-            DATA[individualkey]['total']?? "",
+            DATA[individualkey]['latitude']?? "",
+            DATA[individualkey]['longitude']?? "",
+            DATA[individualkey]['period_number']?? "",
           );
           _Attenclasslist.add(ATNDCLSMDL);
         }
@@ -81,6 +87,13 @@ class _ClassDetailsScreenState extends State<clDetailScreen> {
       });
     });
 
+  }
+  void _getlocation() async{
+    final position1 = (await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)) ;
+    setState(() {
+      position_latitude = "${position1.latitude}";
+      position_longitude = "${position1.longitude}";
+    });
   }
 
   Future<void>getUserData() async{
@@ -98,7 +111,7 @@ class _ClassDetailsScreenState extends State<clDetailScreen> {
 
         backgroundColor: const Color(0xFFE9E9E9),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
+          onPressed: ()  {
             int a = 0;
             Random random = new Random();
             int randomNumber = random.nextInt(1000000);
@@ -109,82 +122,100 @@ class _ClassDetailsScreenState extends State<clDetailScreen> {
                 a = 1;
               }
             }
-            if (a != 1) {
-              var securitycode = randomNumber.toString();
+            var securitycode = randomNumber.toString();
+            final periodController = new TextEditingController();
 
-              final databaseReference = FirebaseDatabase.instance.reference();
-              setState(() {
-                securitycodes = securitycode;
-              });
-              databaseReference.child('Create_Course').child('AttenDance')
-                  .child(cl.coursecode).child(date).set(
-                  {
-                    'Date': DateFormat("d MMMM").format(today),
-                    'Time': today.minute.toString(),
-                    'ClassCode': securitycode,
-                    'Presents': '',
-                    'coordinateofmine': '',
-                    'total': ''
-                  }).then((value) =>
-              databaseReference.child('ATTEND')
-                  .child(cl.coursecode).child(date).push().set(
-                  {
-                    'Name':cl.CourseName,
-                    'Date': DateFormat("d MMMM").format(today),
-                    'Time': today.minute.toString(),
-                    'ClassCode': securitycode,
-                    'Presents': '',
-                    'coordinateofmine': '',
-                    'total': ''
-                  })
-                  .then((value) =>
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(20.0)), //this right here
-                        child: Container(
-                          height: 200,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "    Successfuly Created Class!!!\n Your Class Code is "+securitycode,
-                                  style: const TextStyle(
-                                      color: Colors.blueGrey,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                SizedBox(
-                                  width: 320.0,
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        getList();
-                                      });
-                                      Navigator.of(context).pop();
-                                      Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen()));
+            final databaseReference = FirebaseDatabase.instance.reference();
+            setState(() {
+              securitycodes = securitycode;
+            });
+            if(a!=1) {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Dialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.circular(20.0)), //this right here
+                      child: Container(
+                        height: 200,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "    Your Class Code is " +
+                                    securitycode,
+                                style: const TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              SizedBox(height: 10,),
+                              TextField(
+                                controller: periodController,
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'Enter the period of class:-'),
+                              ),
+                              SizedBox(height: 10,),
+                              SizedBox(
+                                width: 320.0,
+                                child: RaisedButton(
+                                  onPressed: () {
 
-                                    },
-                                    child: Text(
-                                      "Okay",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    color: const Color(0xFF1BC0C5),
+                                      databaseReference.child('Create_Course').child('AttenDance')
+                                          .child(cl.coursecode).child(date).set(
+                                          {
+                                            'Date': DateFormat("d MMMM").format(today),
+                                            'Time': DateFormat("HH:mm").format(today),
+                                            'ClassCode': securitycode,
+                                            'Presents': '',
+                                            'latitude': position_latitude,
+                                            'longitude':position_longitude,
+                                            'period_number': periodController.text,
+                                          }).then((value) =>
+                                          databaseReference.child('ATTEND')
+                                              .child(cl.coursecode).child(date).push().set(
+                                              {
+                                                'Name':cl.CourseName,
+                                                'Date': DateFormat("d MMMM").format(today),
+                                                'Time': DateFormat("HH:mm").format(today),
+                                                'ClassCode': securitycode,
+                                                'Presents': '',
+                                                'latitude': position_latitude,
+                                                'longitude':position_longitude,
+                                                'total': ''
+                                              })
+                                              .then((value) =>
+
+                                          {
+                                          setState(() {
+                                          getList();
+                                          })
+                                          }));
+
+                                    Navigator.of(context).pop();
+                                    Navigator.push(context,
+                                        new MaterialPageRoute(
+                                            builder: (context) =>
+                                                HomeScreen(NAME: usr.name,)));
+                                  },
+                                  child: Text(
+                                    "Okay",
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                )
-                              ],
-                            ),
+                                  color: const Color(0xFF1BC0C5),
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                      );}))
-
-              );
+                      ),
+                    );
+                  });
             }
             else {
               Toast.show("You Can not create two classes in a day:-Thankyou", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
@@ -535,5 +566,8 @@ class InstructorTile extends StatelessWidget {
         ),
       ),
     );
+
+
   }
+
 }

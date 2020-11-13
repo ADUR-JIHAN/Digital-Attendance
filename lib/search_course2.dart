@@ -221,8 +221,9 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
         progress: transitionAnimation,
       ),
       onPressed: () {
-        //Take control back to previous page
         this.close(context,null);
+        Navigator.of(context).pop(true);
+
       },
     );
   }

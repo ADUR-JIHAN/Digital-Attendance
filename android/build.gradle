@@ -4,6 +4,11 @@ buildscript {
         google()
         jcenter()
     }
+    ext {
+        buildToolsVersion = "29.0.3"
+        compileSdkVersion = 29
+
+    }
 
     dependencies {
         classpath 'com.google.gms:google-services:4.3.4'

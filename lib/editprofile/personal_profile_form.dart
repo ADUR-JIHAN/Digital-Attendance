@@ -1,8 +1,10 @@
 
 import 'package:XmPrep/components/custom_surfix_icon.dart';
 import 'package:XmPrep/components/default_button.dart';
+import 'package:XmPrep/home/homescreen.dart';
 import 'package:XmPrep/model/NewUser.dart';
 import 'package:XmPrep/size_config.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 
@@ -17,11 +19,15 @@ class _PersonalProfileFormState extends State<PersonalProfileForm> {
   NewUser usr;
   _PersonalProfileFormState(this.usr);
   final List<String> errors = [];
-  String Name;
+  String name;
   String id;
+  String phone;
+  String university;
   String phoneNumber;
   String sub;
-
+  final nameEditController = new TextEditingController();
+  final phoneEditController = new TextEditingController();
+  final universityEditController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +43,35 @@ class _PersonalProfileFormState extends State<PersonalProfileForm> {
           DefaultButton(
             text: "UPDATE",
             press: () {
-
-            },
+               name = nameEditController.text;
+               phone = phoneEditController.text;
+               university = universityEditController.text;
+              if(name.isEmpty ) {
+                setState(() {
+                  name = usr.name;
+                });
+              }
+              if(phone.isEmpty ) {
+                setState(() {
+                  phone = usr.phone;
+                });
+              }
+              if(university.isEmpty ) {
+                setState(() {
+                  university = usr.university_name;
+                });
+              }
+              final databaseReference = FirebaseDatabase.instance.reference();
+              databaseReference.child('User').child(usr.uid).update({
+              "name": name,
+               "phone": phone,
+               "university_name": university,
+               }).then((_) {
+              print('Transaction  committed.'+name);
+              print(usr.name);
+              Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen(NAME: name,)));
+           });
+          },
           ),
         ],
       ),
@@ -47,6 +80,7 @@ class _PersonalProfileFormState extends State<PersonalProfileForm> {
 
   TextFormField buildUniField() {
     return TextFormField(
+      controller: universityEditController,
       onSaved: (newValue) => sub = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -74,6 +108,7 @@ class _PersonalProfileFormState extends State<PersonalProfileForm> {
   }
   TextFormField buildPhoneNumberFormField() {
     return TextFormField(
+      controller: phoneEditController,
       keyboardType: TextInputType.phone,
       onSaved: (newValue) => phoneNumber = newValue,
       onChanged: (value) {
@@ -102,7 +137,7 @@ class _PersonalProfileFormState extends State<PersonalProfileForm> {
 
   TextFormField buildNameFormField() {
     return TextFormField(
-      onSaved: (newValue) => Name = newValue,
+      controller: nameEditController,
       onChanged: (value) {
         if (value.isNotEmpty) {
           //removeError(error: kNamelNullError);

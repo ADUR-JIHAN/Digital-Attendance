@@ -51,23 +51,55 @@ List<Course> enrollmentlist =[];
 List<dynamic> enrollcoursecodelist=[];
 class HomeScreen extends StatefulWidget {
   static String routeName = "/home_screen";
+  final bool show;
   final String NAME;
   const HomeScreen({
     Key key,
-    @required this.NAME
+    @required this.NAME,
+    @required this.show
   }):super(key:key);
 
 
-  _HomeScreenState createState() => _HomeScreenState(NAME?? "");
+  _HomeScreenState createState() => _HomeScreenState(NAME?? "",show);
 }
 NewUser usr;
 String pic='';
 class _HomeScreenState extends State<HomeScreen> {
-  _HomeScreenState(this.NAME);
+  _HomeScreenState(this.NAME,this.show);
   String NAME;
+  bool show;
 
   @override
   void initState() {
+    setState(() {
+      show = false;
+      FirebaseDatabase.instance.reference().child('User').once().then((
+          DataSnapshot snapshot) {
+        Map<dynamic, dynamic> values = snapshot.value;
+        values.forEach((key, values) {
+          if (values['uid'] == ID) {
+            setState(() {
+              getList(values['uid'].toString());
+              NAME = values['name'];
+              pic = values['pic'];
+              usr = new NewUser(
+                  values['email'],
+                  values['id'],
+                  values['name'],
+                  values['pass'],
+                  values['phone'],
+                  values['pic'],
+                  values['semester'],
+                  values['session'],
+                  values['sub'],
+                  values['uid'],
+                  values['university_name']);
+              NAME = usr.name;
+            });
+          }
+        });
+      });
+    });
     getUserData();
     FirebaseDatabase database = new FirebaseDatabase();
     final databaseReference = FirebaseDatabase.instance.reference();
@@ -255,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 16),
             new GestureDetector(
-              onTap: () => Navigator.of(context).pop(true),
+              onTap: () => exit(0),
               child: Text("YES"),
             ),
           ],
@@ -468,16 +500,16 @@ class _HomeState extends State<Home> {
                 top: height,
                 left: 0,
                 right: 0,
-                bottom: 2,
+                bottom: 10,
                 child: SingleChildScrollView(
                   child: Container(
-                    height: height*0.8,
+                    height: MediaQuery.of(context).size.height*0.7,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(
-                            bottom: 10,
+                            bottom: 5,
                             left: 18,
                             right: 16,
                           ),
@@ -509,11 +541,11 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         SizedBox(
-                          height: 18,
+                          height: MediaQuery.of(context).size.height*0.01,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
-                            bottom: 10,
+                            bottom: 0,
                             left: 18,
                             right: 16,
                           ),
@@ -536,7 +568,7 @@ class _HomeState extends State<Home> {
                               children: <Widget>[
                                 Container(
                                     width: MediaQuery.of(context).size.width,
-                                    height: 140,
+                                    height: MediaQuery.of(context).size.height*0.15,
                                     child: Swiper(
                                       onIndexChanged: (index) {
                                         setState(() {
@@ -562,7 +594,7 @@ class _HomeState extends State<Home> {
                                       },
                                     )),
                                 SizedBox(
-                                  height: 12,
+                                  height: MediaQuery.of(context).size.height*0.01,
                                 ),
                                 Row(
                                   mainAxisAlignment:
@@ -592,9 +624,9 @@ class _HomeState extends State<Home> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
-                            bottom: 5,
                             left: 18,
                             right: 16,
+                            top: 0,
                           ),
                           child: Text(
                             "Enrollment Course",
@@ -616,7 +648,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         SizedBox(
-                          height: 20,
+                          height: MediaQuery.of(context).size.height*0.01,
                         ),
                       ],
                     ),
@@ -792,6 +824,7 @@ _showModalBottomSheet(context) {
                       CreateNotesForm(),
                 ]),
               ))
+
       )
   );
 
@@ -873,18 +906,18 @@ class menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: MediaQuery.of(context).size.height / 4,
+        height: MediaQuery.of(context).size.height / 4.25,
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             SizedBox(
-              height: 5,
+              height: MediaQuery.of(context).size.height*0.005,
             ),
             Row(
               children: <Widget>[
                 SizedBox(
-                  width: MediaQuery.of(context).size.width*.01,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -907,7 +940,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Search",
@@ -919,7 +952,7 @@ class menu extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -938,7 +971,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Books",
@@ -950,7 +983,7 @@ class menu extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -969,7 +1002,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Dash Board",
@@ -981,7 +1014,7 @@ class menu extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1000,7 +1033,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Teachers",
@@ -1012,7 +1045,7 @@ class menu extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1031,7 +1064,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Students",
@@ -1045,12 +1078,12 @@ class menu extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: 10,
+              height:  MediaQuery.of(context).size.height*0.0025,
             ),
             Row(
               children: <Widget>[
                 SizedBox(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1069,7 +1102,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Sell & Buy",
@@ -1081,7 +1114,7 @@ class menu extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1100,7 +1133,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Coin",
@@ -1112,7 +1145,7 @@ class menu extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1131,7 +1164,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Setting",
@@ -1143,7 +1176,7 @@ class menu extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 10,
+                  width:MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1162,7 +1195,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Notification",
@@ -1174,7 +1207,7 @@ class menu extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width*0.015,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1197,7 +1230,7 @@ class menu extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 2,
-                      width: 5,
+                      width: MediaQuery.of(context).size.width*0.015,
                     ),
                     Text(
                       "Sign Out",
@@ -1229,14 +1262,14 @@ class ClassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: getProportionateScreenWidth(20)),
+      padding: EdgeInsets.only(left: getProportionateScreenWidth(15)),
       child: GestureDetector(
         onTap: (){
           Navigator.push(context, new MaterialPageRoute(builder: (context) => enclDetailScreen(cl:cl,usr:usr)));
         },
         child: SizedBox(
-          width: getProportionateScreenWidth(202),
-          height: getProportionateScreenWidth(100),
+          width: getProportionateScreenWidth(160),
+          height: getProportionateScreenWidth(80),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Stack(
@@ -1244,6 +1277,8 @@ class ClassCard extends StatelessWidget {
                 Image.network(
                   cl.Pic,
                   fit: BoxFit.cover,
+                  width: MediaQuery.of(context).size.width*0.5,
+                  height: MediaQuery.of(context).size.height*0.3,
 
                 ),
                 Container(
@@ -1310,19 +1345,19 @@ class ADDNOTES extends StatelessWidget {
         },
         child: Container(
           margin: EdgeInsets.only(right: 20),
-          padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
+          padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(30),
             color: selected ? Colors.black12 : Colors.white,
             border: Border.all(
                 color: selected ? Colors.transparent : Colors.grey[200],
-                width: 1.5),
+                width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey[100],
-                blurRadius: 15,
+                blurRadius: 5,
                 offset: Offset(15, 0),
-                spreadRadius: 5,
+                spreadRadius: 1,
               )
             ],
           ),
@@ -1333,17 +1368,17 @@ class ADDNOTES extends StatelessWidget {
                 padding: EdgeInsets.all(20),
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(50),
+                    borderRadius: BorderRadius.circular(30),
                     border: Border.all(
                         color: selected ? Colors.deepOrangeAccent : Colors.grey[200],
-                        width: 1.5)),
+                        width: 1)),
                 child: Icon(
                   categoryIcon,
                   color: Colors.deepOrange,
-                  size: 30,
+                  size: 20,
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 2),
               Text(
                 categoryName,
                 style: TextStyle(
@@ -1352,7 +1387,7 @@ class ADDNOTES extends StatelessWidget {
                     fontSize: 15),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
+                margin: EdgeInsets.fromLTRB(0, 0, 0, 1),
                 width: 0,
                 height: 15,
                 color: Colors.black26,

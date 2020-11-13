@@ -1,22 +1,29 @@
 
+import 'dart:io';
+
 import 'package:XmPrep/LIVEATTEND/attend_class.dart';
 import 'package:XmPrep/model/AttendanceClassModel.dart';
 import 'package:XmPrep/model/Course.dart';
 import 'package:XmPrep/model/NewUser.dart';
 import 'package:XmPrep/model/Student.dart';
 import 'package:XmPrep/model/classmembers.dart';
+import 'package:XmPrep/model/proxy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 import 'dart:math';
 import 'package:commons/commons.dart';
-import 'package:toast/toast.dart';
+
+
+
 
 String securitycodes='';
 String ID='';
 AttendanceClassModel acl;
 List<Student> mypresentlist=[];
+List<PXY> plist=[];
+String proxy_giver;
 List<AttendanceClassModel>_Attenclasslist = [];
 class enclDetailScreen extends StatefulWidget {
   final Course cl;
@@ -41,12 +48,15 @@ class _ClassDetailsScreenState extends State<enclDetailScreen> {
 
   @override
   void initState() {
+    proxy.clear();
     _Attenclasslist.clear();
     mypresentlist.clear();
+    getproxygiver();
     getUserData();
     getList();
     getListpresent();
     super.initState();
+
 
     FirebaseDatabase database = new FirebaseDatabase();
     final databaseReference = FirebaseDatabase.instance.reference();
@@ -69,8 +79,9 @@ class _ClassDetailsScreenState extends State<enclDetailScreen> {
             DATA[individualkey]['Time']?? "",
             DATA[individualkey]['ClassCode']?? "",
             DATA[individualkey]['Presents']?? "",
-            DATA[individualkey]['coordinateofmine']?? "",
-            DATA[individualkey]['total']?? "",
+            DATA[individualkey]['latitude']?? "",
+            DATA[individualkey]['longitude']?? "",
+            DATA[individualkey]['period_number']?? "",
           );
           _Attenclasslist.add(ATNDCLSMDL);
         }
@@ -79,13 +90,52 @@ class _ClassDetailsScreenState extends State<enclDetailScreen> {
 
       }
       setState(() {
-        for(var i=0;i<=_Attenclasslist.length;i++)
+        for(var i=0;i<_Attenclasslist.length;i++)
           print(_Attenclasslist[i].Date);
       });
     });
 
   }
+  Future<String> _getId() async {
+    var deviceInfo = DeviceInfoPlugin();
+    if (Platform.isIOS) { // import 'dart:io'
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      return androidDeviceInfo.androidId; // unique ID on Android
+    }
+  }
+  Future <List<PXY>> getproxygiver() async {
+    String deviceId = await _getId();
+    DatabaseReference db =FirebaseDatabase.instance.reference().child('ATTEND')
+        .child(cl.coursecode).child(acl.Date).child("Students").child(deviceId);
+    db.once().then((DataSnapshot snap)
+    {
+      var KEYS = snap.value.keys;
+      var DATA =snap.value;
+      if(DATA!=null){
+        for(var individualkey in KEYS) {
+
+            PXY p = new PXY(
+                DATA[individualkey]['done']??"",
+            );
+            plist.add(p);
+        }
+
+      }
+      else{
+
+      }
+    });
+    setState(() {
+      for(int i=0;i<plist.length;i++)
+        print(plist[i].done);
+    });
+
+  }
   Future <List<Student>> getListpresent() async {
+    mypresentlist.clear();
     DatabaseReference db =FirebaseDatabase.instance.reference().child('ATTENDSTU')
         .child(cl.coursecode).child(usr.uid);
     db.once().then((DataSnapshot snap)
@@ -101,7 +151,8 @@ class _ClassDetailsScreenState extends State<enclDetailScreen> {
             DATA[individualkey]['StudentPic']?? "",
             DATA[individualkey]['StudentUserId']?? "",
             DATA[individualkey]['Time']?? "",
-            DATA[individualkey]['coordinateofmine']?? "",
+            DATA[individualkey]['latitude']?? "",
+            DATA[individualkey]['longitude']?? "",
           );
           mypresentlist.add(student);
         }
@@ -237,7 +288,7 @@ class _ClassDetailsScreenState extends State<enclDetailScreen> {
                       left: 0,
                       right: 0,
                       bottom: 2,
-                      child: Attend_Class(coursecode: cl.coursecode,cl: cl,usr:usr),
+                      child: Attend_Class(coursecode: cl.coursecode,cl: cl,usr:usr,),
                     ),
                     SizedBox(
                       height: 20,
@@ -311,7 +362,7 @@ class _ClassDetailsScreenState extends State<enclDetailScreen> {
                                               Row(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: <Widget>[
-                                                  SizedBox(width:15),
+                                                  SizedBox(width:MediaQuery.of(context).size.width*0.03,),
                                                   Text(
                                                     usr.name,
                                                     style: TextStyle(
@@ -319,7 +370,7 @@ class _ClassDetailsScreenState extends State<enclDetailScreen> {
                                                         color:s,
                                                         fontSize: 18.0),
                                                   ),
-                                                  SizedBox(width:MediaQuery.of(context).size.width*0.5,),
+                                                  SizedBox(width:MediaQuery.of(context).size.width*0.39,),
                                                   Marker(present:mypresentlist[id].PresentStatus),
 
 

@@ -4,10 +4,11 @@ import 'package:XmPrep/components/socal_card.dart';
 import 'package:XmPrep/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'sign_form.dart';
 
 class SignInScreen extends StatelessWidget {
+  bool show = false;
   final Function toggleView;
   SignInScreen({this.toggleView});
   static String routeName = "/sign_in";
@@ -17,7 +18,9 @@ class SignInScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text("Sign In"),
         ),
-        body: SafeArea(
+        body:ModalProgressHUD(
+        inAsyncCall: show, // here show is bool value, which is used to when to show the progess indicator
+        child:SafeArea(
           child: SizedBox(
             width: double.infinity,
             child: Padding(
@@ -120,6 +123,6 @@ class SignInScreen extends StatelessWidget {
               ),
             ),
           ),
-        ));
+        )));
   }
 }

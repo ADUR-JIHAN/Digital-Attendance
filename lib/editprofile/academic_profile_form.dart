@@ -1,8 +1,10 @@
 
 import 'package:XmPrep/components/custom_surfix_icon.dart';
 import 'package:XmPrep/components/default_button.dart';
+import 'package:XmPrep/home/homescreen.dart';
 import 'package:XmPrep/model/NewUser.dart';
 import 'package:XmPrep/size_config.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 
@@ -21,6 +23,10 @@ class _AcademicProfileFormState extends State<AcademicProfileForm> {
   String sub;
   String semester;
   String session;
+  final idEditController = new TextEditingController();
+  final subjectnameEditController = new TextEditingController();
+  final semesterEditController = new TextEditingController();
+  final sessionEditController = new TextEditingController();
 
 
 
@@ -40,6 +46,41 @@ class _AcademicProfileFormState extends State<AcademicProfileForm> {
           DefaultButton(
             text: "UPDATE",
             press: () {
+              String id = idEditController.text;
+              String sub = subjectnameEditController.text;
+              String semester = semesterEditController.text;
+              String session =  sessionEditController.text;
+              if(id.isEmpty) {
+                setState(() {
+                  id = usr.id;
+                });
+              }if(sub.isEmpty) {
+                setState(() {
+                  sub = usr.sub;
+                });
+              }
+              if(semester.isEmpty) {
+                setState(() {
+                  semester = usr.semester;
+                });
+              }
+              if(session.isEmpty) {
+                setState(() {
+                  session = usr.session;
+                });
+              }
+              final databaseReference = FirebaseDatabase.instance.reference();
+              databaseReference.child('User').child(usr.uid).update({
+                "sub": sub,
+                "semester": semester,
+                "session": session,
+                "id": id
+              }).then((_) {
+                print('Transaction  committed.');
+                Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen(NAME: usr.name,)));
+              });
+
+
 
             },
           ),
@@ -50,6 +91,7 @@ class _AcademicProfileFormState extends State<AcademicProfileForm> {
 
   TextFormField buildSubField() {
     return TextFormField(
+      controller: subjectnameEditController,
       onSaved: (newValue) => sub = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -93,6 +135,7 @@ class _AcademicProfileFormState extends State<AcademicProfileForm> {
         }
         return null;
       },
+      controller: semesterEditController,
       decoration: InputDecoration(
         labelText: "Semester",
         hintText: usr.semester,
@@ -106,6 +149,7 @@ class _AcademicProfileFormState extends State<AcademicProfileForm> {
 
   TextFormField buildIdField() {
     return TextFormField(
+      controller: idEditController,
       onSaved: (newValue) => id = newValue,
       decoration: InputDecoration(
         labelText: "ID",
@@ -120,6 +164,7 @@ class _AcademicProfileFormState extends State<AcademicProfileForm> {
 
   TextFormField buildSessionFormField() {
     return TextFormField(
+      controller: sessionEditController,
       onSaved: (newValue) => session = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {

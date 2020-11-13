@@ -149,7 +149,7 @@ class _CreateNotesFormState extends State<CreateNotesForm> {
                           child: RaisedButton(
                             onPressed: () {
                               Navigator.of(context).pop();
-                              Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen(NAME:name?? "")));
+                              Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen(NAME:usr.name)));
                             },
                             child: Text(
                               "Okay",
@@ -271,13 +271,25 @@ class _CreateNotesFormState extends State<CreateNotesForm> {
                   ),
                   color: Colors.redAccent.withOpacity(0.3),
                   onPressed: () async {
-                    ModalProgressHUD(
-                      inAsyncCall: false, // here show is bool value, which is used to when to show the progess indicator
-                      child: Column(
-                        children: <Widget>[
-                          Text(" Modal Progress Indicator ")
-                        ],
-                      ),
+                    showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (context) => AlertDialog(
+                          content: Row(children: <Widget>[
+                            SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 1,
+                                    valueColor: AlwaysStoppedAnimation(Colors.black)
+                                )
+                            ),
+
+                            SizedBox(width: 10),
+
+                            Text("Creating Courses..........")
+                          ]),
+                        )
                     );
                     uploadImage();
                   },

@@ -28,7 +28,7 @@ class _SearchAppBarRecipeState extends State<search_course_result> {
   String title;
   @override
   void initState() {
-
+    _resultcourselist.clear();
     getUserData();
     super.initState();
     getALLRESULTList(title);

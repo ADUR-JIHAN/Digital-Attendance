@@ -76,7 +76,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Text(
-                    'Sign In',
+                    'Sign Up',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xFFB42827),
@@ -112,10 +112,10 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
                        'phone':phoneTextEditController.text.toString(),
                        'sub':subTextEditController.text.toString(),
                         'uid':onValue.uid,
-                        'pic':'https://firebasestorage.googleapis.com/v0/b/exampreparation-124c5.appspot.com/o/laptop-user.png?alt=media&token=d4ec5151-bfa1-4da0-9f59-eab4c425cb26',
+                        'pic':'https://firebasestorage.googleapis.com/v0/b/exampreparation-124c5.appspot.com/o/protemppic%2Flaptop-user-1-1179329.png?alt=media&token=5f2ae607-d3fe-4e42-9f8f-529509640600',
                          'university_name':'',
                          'semester':'',
-                          'session':'',
+                      'session':'',
                     }).then((userInfoValue) {
                       var userUpdateInfo = new UserUpdateInfo(); //create user update object
                       userUpdateInfo.displayName = nameTextEditController.text;
